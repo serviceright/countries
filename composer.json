@@ -25,15 +25,17 @@
             "role": "Creator"
         }
     ],
-
     "require": {
         "php": ">=7.0",
-        "pragmarx/coollection": ">=0.5",
+        "serviceright/coollection": ">=0.5",
         "psr/simple-cache": "^1.0",
         "nette/caching": "^2.5|^3.0",
         "colinodell/json5": "^1.0|^2.0"
     },
-
+    "repositories": [
+        {"type": "composer", "url": "https://repo.packagist.com/serviceright/microservice-world/"},
+        {"packagist.org": false}
+    ],
     "require-dev": {
         "phpunit/phpunit": "~6.0|~7.0|~8.0",
         "squizlabs/php_codesniffer": "^2.3",
