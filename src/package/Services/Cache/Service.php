@@ -83,14 +83,16 @@ class Service implements CacheInterface
      * Fetches a value from the cache.
      *
      * @param string $key
-     * @param null $default
+     * @param mixed|null $default
      * @return mixed|null
      */
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         if ($this->enabled()) {
             return $this->manager->get($key, $default);
         }
+
+        return null;
     }
 
     /**
@@ -115,16 +117,16 @@ class Service implements CacheInterface
      *
      * @param string $key
      * @param mixed $value
-     * @param null $ttl
+     * @param null|int|\DateInterval $ttl
      * @return bool
      */
-    public function set($key, $value, $ttl = null)
+    public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
         if ($this->enabled()) {
             return $this->manager->set($key, $value, $ttl);
         }
 
-        return $value;
+        return false;
     }
 
     /**
@@ -133,27 +135,29 @@ class Service implements CacheInterface
      * @param string $key
      * @return bool
      */
-    public function delete($key)
+    public function delete($key): bool
     {
-        $this->manager->delete($key);
+        return $this->manager->delete($key);
     }
 
     /**
      * Wipe clean the entire cache's keys.
+     *
+     * @return bool
      */
-    public function clear()
+    public function clear(): bool
     {
-        $this->manager->clear();
+        return $this->manager->clear();
     }
 
     /**
      * Obtains multiple cache items by their unique keys.
      *
-     * @param $keys
-     * @param null $default
-     * @return array
+     * @param iterable $keys
+     * @param mixed|null $default
+     * @return iterable
      */
-    public function getMultiple($keys, $default = null)
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         return $this->manager->getMultiple($keys, $default);
     }
@@ -161,11 +165,11 @@ class Service implements CacheInterface
     /**
      * Persists a set of key => value pairs in the cache, with an optional TTL.
      *
-     * @param $values
-     * @param null $ttl
+     * @param iterable $keys
+     * @param null|int|\DateInterval $ttl
      * @return bool
      */
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple(iterable $keys, null|int|\DateInterval $ttl = null): bool
     {
         return $this->manager->setMultiple($keys, $ttl);
     }
@@ -173,12 +177,12 @@ class Service implements CacheInterface
     /**
      * Deletes multiple cache items in a single operation.
      *
-     * @param $keys
-     * @return bool|void
+     * @param iterable $keys
+     * @return bool
      */
-    public function deleteMultiple($keys)
+    public function deleteMultiple(iterable $keys): bool
     {
-        $this->manager->deleteMultiple($keys);
+        return $this->manager->deleteMultiple($keys);
     }
 
     /**
@@ -187,7 +191,7 @@ class Service implements CacheInterface
      * @param string $key
      * @return bool
      */
-    public function has($key)
+    public function has(string $key): bool
     {
         return $this->manager->has($key);
     }

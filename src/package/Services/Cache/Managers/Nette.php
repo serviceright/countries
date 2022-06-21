@@ -89,14 +89,16 @@ class Nette implements CacheInterface
      * Fetches a value from the cache.
      *
      * @param string $key
-     * @param null $default
+     * @param mixed|null $default
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         if ($this->enabled()) {
             return $this->cache->load($key, $default);
         }
+
+        return null;
     }
 
     /**
@@ -113,16 +115,16 @@ class Nette implements CacheInterface
      *
      * @param string $key
      * @param mixed $value
-     * @param null $ttl
+     * @param null|int|\DateInterval $ttl
      * @return bool
      */
-    public function set($key, $value, $ttl = null)
+    public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
         if ($this->enabled()) {
             return $this->cache->save($key, $value, [NetteCache::EXPIRE => $this->makeExpiration($ttl)]);
         }
 
-        return $value;
+        return false;
     }
 
     /**
@@ -131,27 +133,29 @@ class Nette implements CacheInterface
      * @param string $key
      * @return bool
      */
-    public function delete($key)
+    public function delete($key): bool
     {
-        $this->cache->remove($key);
+        return $this->cache->remove($key);
     }
 
     /**
      * Wipe clean the entire cache's keys.
+     * 
+     * @return bool
      */
-    public function clear()
+    public function clear(): bool
     {
-        $this->cache->clean([NetteCache::ALL => true]);
+        return $this->cache->clean([NetteCache::ALL => true]);
     }
 
     /**
      * Obtains multiple cache items by their unique keys.
      *
-     * @param $keys
-     * @param null $default
-     * @return array
+     * @param iterable $keys
+     * @param mixed|null $default
+     * @return iterable
      */
-    public function getMultiple($keys, $default = null)
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         return coollect($keys)->map(function ($key) {
             return $this->get($key);
@@ -161,13 +165,13 @@ class Nette implements CacheInterface
     /**
      * Persists a set of key => value pairs in the cache, with an optional TTL.
      *
-     * @param $values
-     * @param null $ttl
+     * @param iterable $keys
+     * @param null|int|\DateInterval $ttl
      * @return bool
      */
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple(iterable $keys, null|int|\DateInterval $ttl = null): bool
     {
-        return coollect($values)->map(function ($value, $key) use ($ttl) {
+        return coollect($keys)->map(function ($value, $key) use ($ttl) {
             return $this->set($key, $value, $ttl);
         });
     }
@@ -175,12 +179,12 @@ class Nette implements CacheInterface
     /**
      * Deletes multiple cache items in a single operation.
      *
-     * @param $keys
-     * @return bool|void
+     * @param iterable $keys
+     * @return bool
      */
-    public function deleteMultiple($keys)
+    public function deleteMultiple(iterable $keys): bool
     {
-        coollect($keys)->map(function ($key) {
+        return coollect($keys)->map(function ($key) {
             $this->forget($key);
         });
     }
@@ -191,7 +195,7 @@ class Nette implements CacheInterface
      * @param string $key
      * @return bool
      */
-    public function has($key)
+    public function has(string $key): bool
     {
         return ! \is_null($this->get($key));
     }
